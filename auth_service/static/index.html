@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meme App - Authentication</title>
+
+    <!-- High-Impact Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css" />
+
+    <!-- Google reCAPTCHA v2 -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Meme App</h1>
+
+            <!-- Login Form -->
+            <div id="login-section">
+                <h2>Welcome Back</h2>
+                <div class="form-group">
+                    <label for="login-user">Username</label>
+                    <input type="text" id="login-user" placeholder="Enter your username" />
+                </div>
+                <div class="form-group">
+                    <label for="login-pass">Password</label>
+                    <input type="password" id="login-pass" placeholder="Enter your password" />
+                </div>
+                <div class="recaptcha-container">
+                    <div class="g-recaptcha" id="login-recaptcha"
+                        data-sitekey="6LeAJCQsAAAAAPE2580tQJB2rqE-vQxn2s8e_EiH"></div>
+                </div>
+                <button onclick="handleLogin()">Log In</button>
+                <p class="switch-text">
+                    <a href="#" onclick="showForgotPassword(); return false;">Forgot password?</a>
+                </p>
+                <p class="switch-text">
+                    Don't have an account?
+                    <a href="#" onclick="toggleView(); return false;">Create one</a>
+                </p>
+                <div class="security-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    Protected by rate limiting &amp; reCAPTCHA
+                </div>
+            </div>
+
+            <!-- MFA Verification Section -->
+            <div id="mfa-section" class="hidden">
+                <h2>Two-Factor Authentication</h2>
+                <p class="section-description">Enter the 6-digit code from your authenticator app.</p>
+                <div class="form-group">
+                    <label for="mfa-code">Verification Code</label>
+                    <input type="text" id="mfa-code" placeholder="000000" maxlength="6" pattern="[0-9]*"
+                        style="text-align: center; font-size: 1.5rem; letter-spacing: 0.5rem;"
+                        onkeypress="if(event.key === 'Enter') handleMFAVerify();" />
+                </div>
+                <button onclick="handleMFAVerify()">Verify</button>
+                <p class="switch-text">
+                    <a href="#" onclick="cancelMFA(); return false;">← Cancel and login with different account</a>
+                </p>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-section" class="hidden">
+                <h2>Create Account</h2>
+                <div class="form-group">
+                    <label for="reg-user">Username</label>
+                    <input type="text" id="reg-user" placeholder="Choose a username"
+                        oninput="validateField('reg-user', validateUsername)" />
+                    <span id="reg-user-error" class="error-text"></span>
+                    <div class="requirements">3-30 characters, letters, numbers, underscores</div>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email</label>
+                    <input type="email" id="reg-email" placeholder="your@email.com"
+                        oninput="validateField('reg-email', validateEmail); validateConfirmEmail();" />
+                    <span id="reg-email-error" class="error-text"></span>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email-confirm">Confirm Email</label>
+                    <input type="email" id="reg-email-confirm" placeholder="Confirm your email"
+                        oninput="validateConfirmEmail()" />
+                    <span id="reg-email-confirm-error" class="error-text"></span>
+                </div>
+                <div class="form-group">
+                    <label for="reg-pass">Password</label>
+                    <input type="password" id="reg-pass" placeholder="Create a strong password"
+                        oninput="validateField('reg-pass', validatePassword); validateConfirmPassword();" />
+                    <span id="reg-pass-error" class="error-text"></span>
+                    <div class="requirements">15+ characters, uppercase, lowercase, number, special char</div>
+                </div>
+                <div class="form-group">
+                    <label for="reg-pass-confirm">Confirm Password</label>
+                    <input type="password" id="reg-pass-confirm" placeholder="Confirm your password"
+                        oninput="validateConfirmPassword()" />
+                    <span id="reg-pass-confirm-error" class="error-text"></span>
+                </div>
+                <div class="recaptcha-container">
+                    <div class="g-recaptcha" id="register-recaptcha"
+                        data-sitekey="6LeAJCQsAAAAAPE2580tQJB2rqE-vQxn2s8e_EiH">
+                    </div>
+                </div>
+                <button onclick="handleRegister()">Create Account</button>
+                <p class="switch-text">
+                    Already have an account?
+                    <a href="#" onclick="toggleView(); return false;">Log In</a>
+                </p>
+                <div class="security-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    Protected by rate limiting &amp; reCAPTCHA
+                </div>
+            </div>
+
+            <!-- Forgot Password Section -->
+            <div id="forgot-password-section" class="hidden">
+                <h2>Reset Password</h2>
+                <p class="section-description">Enter your email address and we'll send you a link to reset your
+                    password.</p>
+                <div class="form-group">
+                    <label for="forgot-email">Email Address</label>
+                    <input type="email" id="forgot-email" placeholder="your@email.com"
+                        oninput="validateField('forgot-email', validateEmail)" />
+                    <span id="forgot-email-error" class="error-text"></span>
+                </div>
+                <div class="recaptcha-container">
+                    <div class="g-recaptcha" id="forgot-recaptcha"
+                        data-sitekey="6LeAJCQsAAAAAPE2580tQJB2rqE-vQxn2s8e_EiH"></div>
+                </div>
+                <button onclick="handleForgotPassword()">Send Reset Link</button>
+                <p class="switch-text">
+                    <a href="#" onclick="backToLogin(); return false;">← Back to Login</a>
+                </p>
+            </div>
+
+            <!-- Resend Verification Section -->
+            <div id="resend-verification-section" class="hidden">
+                <h2>Resend Verification Email</h2>
+                <p class="section-description">Enter your account details to receive a new verification link.</p>
+                <div class="form-group">
+                    <label for="resend-username">Username</label>
+                    <input type="text" id="resend-username" placeholder="Enter your username"
+                        oninput="validateField('resend-username', validateUsername)" />
+                    <span id="resend-username-error" class="error-text"></span>
+                </div>
+                <div class="form-group">
+                    <label for="resend-email">Email Address</label>
+                    <input type="email" id="resend-email" placeholder="your@email.com"
+                        oninput="validateField('resend-email', validateEmail)" />
+                    <span id="resend-email-error" class="error-text"></span>
+                </div>
+                <div class="recaptcha-container">
+                    <div class="g-recaptcha" id="resend-recaptcha"
+                        data-sitekey="6LeAJCQsAAAAAPE2580tQJB2rqE-vQxn2s8e_EiH"></div>
+                </div>
+                <button onclick="handleResendVerification()">Resend Verification Email</button>
+                <p class="switch-text">
+                    <a href="#" onclick="backToLogin(); return false;">← Back to Login</a>
+                </p>
+                <div class="security-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    Protected by rate limiting &amp; reCAPTCHA
+                </div>
+            </div>
+
+            <!-- Reset Password Section (accessed via email link) -->
+            <div id="reset-password-section" class="hidden">
+                <h2>Set New Password</h2>
+                <p class="section-description">Enter your new password below.</p>
+                <div class="form-group">
+                    <label for="reset-pass">New Password</label>
+                    <input type="password" id="reset-pass" placeholder="Create a strong password"
+                        oninput="validateField('reset-pass', validatePassword); validateResetConfirmPassword();" />
+                    <span id="reset-pass-error" class="error-text"></span>
+                    <div class="requirements">15+ characters, uppercase, lowercase, number, special char</div>
+                </div>
+                <div class="form-group">
+                    <label for="reset-pass-confirm">Confirm New Password</label>
+                    <input type="password" id="reset-pass-confirm" placeholder="Confirm your password"
+                        oninput="validateResetConfirmPassword()" />
+                    <span id="reset-pass-confirm-error" class="error-text"></span>
+                </div>
+                <button onclick="handleResetPassword()">Reset Password</button>
+            </div>
+
+            <!-- Verification Pending Section -->
+            <div id="verification-pending" class="hidden">
+                <div class="verification-pending">
+                    <div class="icon">Mail</div>
+                    <h3>Check Your Email</h3>
+                    <p>We've sent a verification link to<br><span class="email" id="pending-email">your email</span></p>
+                    <p>Click the link in the email to verify your account.</p>
+                    <button class="resend-btn" id="resend-btn" onclick="handleResend()">Resend Email</button>
+                    <a href="#" class="back-link" onclick="backToLogin(); return false;">← Back to Login</a>
+                </div>
+            </div>
+
+            <!-- Password Reset Email Sent -->
+            <div id="reset-email-sent" class="hidden">
+                <div class="verification-pending">
+                    <div class="icon">Mail</div>
+                    <h3>Check Your Email</h3>
+                    <p>If an account with that email exists, we've sent a password reset link.</p>
+                    <p>The link will expire in 1 hour.</p>
+                    <a href="#" class="back-link" onclick="backToLogin(); return false;">← Back to Login</a>
+                </div>
+            </div>
+
+            <div id="message" class="hidden"></div>
+            <div id="token-display" class="hidden"></div>
+        </div>
+    </div>
+
+    <!-- Application JavaScript -->
+    <script src="js/app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,171 @@
+services:
+  # --- API Gateway ---
+  gateway:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      # MOUNT FRONTEND HERE:
+      - ./frontend:/usr/share/nginx/html:ro
+    depends_on:
+      - auth_service
+      - meme_service
+      - verification_service
+      - mfa_service
+      - account_service
+    networks:
+      - public_net
+
+  # --- Database ---
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend_net
+
+  # --- Mailhog (Email Testing) ---
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "8025:8025" # Web UI
+    networks:
+      - backend_net
+
+  # --- Auth Microservice ---
+  auth_service:
+    build: ./auth_service
+    container_name: auth_service
+    restart: on-failure
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/auth_db
+      - SECRET_KEY=${AUTH_SECRET_KEY}
+      - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY}
+      - VERIFICATION_SERVICE_URL=http://verification_service:5000
+      - MFA_SERVICE_URL=http://mfa_service:5000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - public_net
+      - backend_net
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5000/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # --- Meme Microservice ---
+  meme_service:
+    build: ./meme_service
+    container_name: meme_service
+    restart: on-failure
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/meme_db
+      - SECRET_KEY=${AUTH_SECRET_KEY}
+      - UPLOAD_FOLDER=/app/uploads
+      - MAX_UPLOAD_SIZE=5242880
+    volumes:
+      - meme_uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - public_net
+      - backend_net
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5000/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # --- Verification Microservice ---
+  verification_service:
+    build: ./verification_service
+    container_name: verification_service
+    restart: on-failure
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/verification_db
+      - SMTP_HOST=mailhog
+      - SMTP_PORT=1025
+      - SMTP_FROM=noreply@memeapp.local
+      - APP_URL=http://localhost
+    depends_on:
+      db:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
+    networks:
+      - public_net
+      - backend_net
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5000/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # --- MFA Microservice ---
+  mfa_service:
+    build: ./mfa_service
+    container_name: mfa_service
+    restart: on-failure
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/mfa_db
+      - APP_NAME=MemeApp
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - public_net
+      - backend_net
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5000/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # --- Account Microservice ---
+  account_service:
+    build: ./account_service
+    container_name: account_service
+    restart: on-failure
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/auth_db
+      - SECRET_KEY=${AUTH_SECRET_KEY}
+      - MFA_SERVICE_URL=http://mfa_service:5000
+      - VERIFICATION_SERVICE_URL=http://verification_service:5000
+    depends_on:
+      db:
+        condition: service_healthy
+      mfa_service:
+        condition: service_started
+    networks:
+      - public_net
+      - backend_net
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5000/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres_data:
+  meme_uploads:
+
+
+networks:
+  public_net:
+  backend_net:
+
+

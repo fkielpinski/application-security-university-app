@@ -1,0 +1,347 @@
+/* Meme App - High-Impact Magazine-Style Design */
+/* Aesthetic: Minimalist, editorial, gallery-inspired */
+
+:root {
+    /* High-Impact Palette */
+    --primary: #000000;
+    --primary-hover: #333333;
+    --bg: #ffffff;
+    --card: #ffffff;
+    --text: #111111;
+    --text-muted: #666666;
+    --border: #e5e5e5;
+    --error: #c00000;
+    --success: #006600;
+    --warning: #996600;
+
+    /* Typography */
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-sans);
+    font-weight: 300;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container {
+    width: 100%;
+    max-width: 400px;
+}
+
+.card {
+    background: var(--card);
+    border-radius: 0;
+    /* Sharp edges - no rounded corners */
+    box-shadow: none;
+    /* No shadows */
+    padding: 3rem 2rem;
+    border: 1px solid var(--border);
+}
+
+/* Typography - Magazine Style */
+h1 {
+    font-family: var(--font-serif);
+    font-size: 2.5rem;
+    font-weight: 400;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+    color: var(--text);
+}
+
+h2 {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 2rem;
+    letter-spacing: 0;
+}
+
+h3 {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--text);
+}
+
+/* Form Elements - Minimal, Underlined Style */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+    color: var(--text-muted);
+}
+
+input {
+    width: 100%;
+    padding: 0.75rem 0;
+    font-size: 1rem;
+    font-family: var(--font-sans);
+    border: none;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    /* Sharp */
+    background: transparent;
+    transition: border-color 0.3s ease;
+    outline: none;
+}
+
+input:focus {
+    border-bottom-color: var(--primary);
+}
+
+input::placeholder {
+    color: #999;
+}
+
+input.error {
+    border-bottom-color: var(--error);
+}
+
+.error-text {
+    color: var(--error);
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    display: none;
+}
+
+.error-text.visible {
+    display: block;
+}
+
+.requirements {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+}
+
+/* Buttons - Solid Black, Sharp Corners */
+button {
+    width: 100%;
+    padding: 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: white;
+    background: var(--primary);
+    border: none;
+    border-radius: 0;
+    /* Sharp */
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    margin-top: 1rem;
+}
+
+button:hover {
+    opacity: 0.7;
+}
+
+button:active {
+    opacity: 0.5;
+}
+
+button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* Links - Simple Text */
+.switch-text {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.switch-text a {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.switch-text a:hover {
+    color: var(--primary);
+}
+
+/* Messages */
+#message {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 0;
+    font-size: 0.875rem;
+    text-align: center;
+    border: 1px solid;
+}
+
+#message.success {
+    background: transparent;
+    color: var(--success);
+    border-color: var(--success);
+}
+
+#message.error {
+    background: transparent;
+    color: var(--error);
+    border-color: var(--error);
+}
+
+#message.warning {
+    background: transparent;
+    color: var(--warning);
+    border-color: var(--warning);
+}
+
+.hidden {
+    display: none !important;
+}
+
+#token-display {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #fafafa;
+    border: 1px solid var(--border);
+    border-radius: 0;
+    font-size: 0.75rem;
+    word-break: break-all;
+    font-family: 'SF Mono', Consolas, monospace;
+}
+
+/* reCAPTCHA */
+.recaptcha-container {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0;
+    min-height: 78px;
+}
+
+.section-description {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Security Badge - Minimal */
+.security-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+.security-badge svg {
+    width: 12px;
+    height: 12px;
+}
+
+/* Verification Pending - Clean */
+.verification-pending {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.verification-pending .icon {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    color: var(--text-muted);
+}
+
+.verification-pending h3 {
+    font-family: var(--font-serif);
+    margin-bottom: 1rem;
+}
+
+.verification-pending p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.verification-pending .email {
+    font-weight: 500;
+    color: var(--text);
+}
+
+/* Resend Button - Outline Style */
+.resend-btn {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    width: auto;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.75rem;
+}
+
+.resend-btn:hover {
+    background: var(--primary);
+    color: white;
+    opacity: 1;
+}
+
+.resend-btn:disabled {
+    border-color: var(--text-muted);
+    color: var(--text-muted);
+}
+
+.back-link {
+    display: block;
+    margin-top: 1.5rem;
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-size: 0.875rem;
+}
+
+.back-link:hover {
+    color: var(--text);
+}
+
+/* MFA Code Input - Centered, Large */
+#mfa-code {
+    text-align: center;
+    font-size: 1.5rem;
+    letter-spacing: 0.5rem;
+    font-family: 'SF Mono', Consolas, monospace;
+}

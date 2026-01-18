@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Settings</title>
+    <!-- High-Impact Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/settings/css/styles.css" />
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Settings</h1>
+            <div class="user-info">
+                <span id="greeting">Loading...</span>
+                <a href="/dashboard" class="btn-secondary">← Back to Dashboard</a>
+            </div>
+        </header>
+
+        <!-- Login Required -->
+        <div id="login-prompt" class="hidden">
+            <div class="card">
+                <h2>Authentication Required</h2>
+                <p>Please log in to access your account settings.</p>
+                <a href="/" class="btn">Go to Login</a>
+            </div>
+        </div>
+
+        <!-- Settings Content -->
+        <main id="settings-content" class="settings-content hidden">
+            <!-- Profile Section -->
+            <section class="settings-section">
+                <h2>Profile</h2>
+                <div class="settings-card">
+                    <div class="profile-info">
+                        <div class="profile-row">
+                            <label>Username</label>
+                            <span id="profile-username">-</span>
+                        </div>
+                        <div class="profile-row">
+                            <label>Email</label>
+                            <span id="profile-email">-</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MFA Section -->
+            <section class="settings-section">
+                <h2>Multi-Factor Authentication</h2>
+                <div class="settings-card">
+                    <div id="mfa-status" class="mfa-status">
+                        <span class="status-badge" id="mfa-badge">Loading...</span>
+                    </div>
+
+                    <!-- MFA Disabled State -->
+                    <div id="mfa-disabled" class="hidden">
+                        <p>Add an extra layer of security to your account using a TOTP authenticator app.</p>
+                        <button onclick="setupMFA()" class="btn">Enable MFA</button>
+                    </div>
+
+                    <!-- MFA Enabled State -->
+                    <div id="mfa-enabled" class="hidden">
+                        <p class="success-text">Your account is protected with two-factor authentication.</p>
+                        <button onclick="showDisableMFA()" class="btn btn-danger">Disable MFA</button>
+                    </div>
+
+                    <!-- MFA Setup Flow -->
+                    <div id="mfa-setup" class="hidden">
+                        <div class="mfa-setup-container">
+                            <h3>Scan this QR code with your authenticator app</h3>
+                            <div id="qr-code-container"></div>
+                            <p class="muted">Or enter this secret manually: <code id="mfa-secret"></code></p>
+
+                            <div class="backup-codes hidden" id="backup-codes-container">
+                                <h4>⚠️ Backup Codes (Save these!)</h4>
+                                <div id="backup-codes" class="backup-codes-grid"></div>
+                            </div>
+
+                            <div class="verify-form">
+                                <label>Enter the 6-digit code from your app:</label>
+                                <input type="text" id="totp-code" placeholder="000000" maxlength="6" pattern="[0-9]*" />
+                                <button onclick="enableMFA()" class="btn">Verify & Enable</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Disable MFA Form -->
+                    <div id="mfa-disable-form" class="hidden">
+                        <p>Enter your current TOTP code to disable MFA:</p>
+                        <div class="verify-form">
+                            <input type="text" id="disable-totp-code" placeholder="000000" maxlength="6"
+                                pattern="[0-9]*" />
+                            <button onclick="disableMFA()" class="btn btn-danger">Disable MFA</button>
+                            <button onclick="cancelDisableMFA()" class="btn btn-secondary">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Password Section -->
+            <section class="settings-section">
+                <h2>Change Password</h2>
+                <div class="settings-card">
+                    <form id="password-form" onsubmit="changePassword(event)">
+                        <div class="form-group">
+                            <label for="current-password">Current Password</label>
+                            <input type="password" id="current-password" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="new-password">New Password</label>
+                            <input type="password" id="new-password" required minlength="15" />
+                            <small>At least 15 characters with uppercase, lowercase, number, and special
+                                character</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm New Password</label>
+                            <input type="password" id="confirm-password" required />
+                        </div>
+                        <button type="submit" class="btn">Change Password</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Email Section -->
+            <section class="settings-section">
+                <h2>Change Email</h2>
+                <div class="settings-card">
+                    <form id="email-form" onsubmit="changeEmail(event)">
+                        <div class="form-group">
+                            <label for="new-email">New Email Address</label>
+                            <input type="email" id="new-email" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="email-password">Confirm with Password</label>
+                            <input type="password" id="email-password" required />
+                        </div>
+                        <button type="submit" class="btn">Update Email</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Sessions Section -->
+            <section class="settings-section">
+                <h2>Active Sessions</h2>
+                <div class="settings-card">
+                    <div id="sessions-list">Loading...</div>
+                    <button onclick="revokeSessions()" class="btn btn-danger">Logout All Devices</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Status Messages -->
+        <div id="message-toast" class="toast hidden"></div>
+
+        <footer class="footer">
+            <p>Meme App - Secure Microservices Demo</p>
+        </footer>
+    </div>
+
+    <script src="/settings/js/app.js"></script>
+</body>
+
+</html>

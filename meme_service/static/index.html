@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Meme Dashboard - Browse, share, and rate memes securely" />
+    <title>Meme Dashboard</title>
+    <!-- High-Impact Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/dashboard/css/styles.css" />
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-left">
+                <h1>Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Search..." maxlength="100" />
+                    <button onclick="performSearch()" class="btn-search">Search</button>
+                </div>
+                <div class="user-info">
+                    <span id="greeting">Loading...</span>
+                    <span id="role-badge" class="role-badge hidden"></span>
+                    <a href="/settings" class="btn-settings" id="settings-link">Settings</a>
+                    <button onclick="handleLogout()" class="btn-logout" id="logout-btn">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Login Prompt -->
+            <div id="login-prompt" class="hidden">
+                <div class="card info-card">
+                    <h2>Welcome</h2>
+                    <p>Browse content as a guest, or <a href="/login">log in</a> to participate.</p>
+                </div>
+            </div>
+
+            <!-- Welcome Section -->
+            <div id="welcome-section" class="welcome-section hidden">
+                <div class="welcome-card">
+                    <h2 id="welcome-message">Hello</h2>
+                    <p>Browse, create, and share content.</p>
+                </div>
+            </div>
+
+            <!-- Create Meme Section -->
+            <div id="create-section" class="create-section hidden">
+                <div class="card create-card">
+                    <h3>Create New Content</h3>
+                    <form id="create-meme-form" onsubmit="handleCreateMeme(event)">
+                        <div class="form-group">
+                            <label for="meme-title">Title *</label>
+                            <input type="text" id="meme-title" name="title" maxlength="200" required
+                                placeholder="Give your meme a catchy title..." />
+                        </div>
+                        <div class="form-group">
+                            <label for="meme-description">Description</label>
+                            <textarea id="meme-description" name="description" maxlength="2000"
+                                placeholder="Add a description (optional)..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="meme-image">Image (max 5MB)</label>
+                            <input type="file" id="meme-image" name="image"
+                                accept="image/jpeg,image/png,image/gif,image/webp" />
+                            <small>Supported: JPEG, PNG, GIF, WebP</small>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Create Meme</button>
+                        </div>
+                    </form>
+                    <div id="create-error" class="error-message hidden"></div>
+                    <div id="create-success" class="success-message hidden"></div>
+                </div>
+            </div>
+
+            <!-- Admin Panel -->
+            <div id="admin-panel" class="admin-panel hidden">
+                <div class="card admin-card">
+                    <h3>Admin Panel</h3>
+                    <p>Administrator Access. Moderation tools active.</p>
+                    <div class="admin-stats">
+                        <span id="total-memes-count">Memes: --</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Results Info -->
+            <div id="search-info" class="search-info hidden">
+                <span id="search-query-display"></span>
+                <button onclick="clearSearch()" class="btn btn-secondary">Clear</button>
+            </div>
+
+            <!-- Meme Grid -->
+            <div id="meme-grid" class="meme-grid">
+                <div class="loading">Loading memes...</div>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="pagination hidden">
+                <button id="prev-page" onclick="loadPage(-1)" class="btn btn-secondary" disabled>← Previous</button>
+                <span id="page-info">Page 1</span>
+                <button id="next-page" onclick="loadPage(1)" class="btn btn-secondary">Next →</button>
+            </div>
+        </main>
+
+        <!-- Meme Detail Modal -->
+        <div id="meme-modal" class="modal hidden">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeModal()">×</button>
+                <div id="modal-body">
+                    <!-- Meme details will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>Meme App - Secure Microservices Demo |
+                <span id="auth-status">Guest Mode</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="/dashboard/js/app.js"></script>
+</body>
+
+</html>

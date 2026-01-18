@@ -1,0 +1,105 @@
+/* Verification Pages - High-Impact Magazine Design */
+
+:root {
+    --primary: #000000;
+    --bg: #ffffff;
+    --card: #ffffff;
+    --text: #111111;
+    --text-muted: #666666;
+    --success: #006600;
+    --error: #c00000;
+
+    /* Typography */
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-sans);
+    font-weight: 300;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid #e5e5e5;
+    padding: 4rem 2rem;
+    text-align: center;
+    max-width: 450px;
+    width: 100%;
+}
+
+/* Replaces "Icon" with typographic statement */
+.icon {
+    font-family: var(--font-serif);
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    line-height: 1;
+}
+
+.icon.success {
+    color: var(--success);
+}
+
+.icon.error {
+    color: var(--error);
+}
+
+h1 {
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    color: var(--text);
+    margin: 1.5rem 0;
+    font-weight: 400;
+}
+
+p {
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.email {
+    font-weight: 500;
+    color: var(--text);
+    border-bottom: 1px solid var(--text);
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 2.5rem;
+    padding: 1rem 2rem;
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.8rem;
+    transition: opacity 0.2s;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+.redirect {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    margin-top: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
