@@ -208,36 +208,42 @@ def send_password_reset_email(email: str, token: str, username: str) -> bool:
     subject = "Reset your Meme App password"
     html_body = f"""
     <html>
-    <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #6366f1;">Password Reset Request</h2>
-        <p>Hi {html.escape(username)},</p>
-        <p>We received a request to reset your password. Click the button below to set a new password:</p>
-        <p style="text-align: center; margin: 30px 0;">
-            <a href="{reset_url}" 
-               style="background: #6366f1; color: white; padding: 12px 24px; 
-                      text-decoration: none; border-radius: 6px; display: inline-block;">
-                Reset Password
-            </a>
-        </p>
-        <p style="color: #666; font-size: 14px;">
-            Or copy this link: <br>
-            <code style="background: #f0f0f0; padding: 4px 8px;">{reset_url}</code>
-        </p>
-        <p style="color: #999; font-size: 12px;">
-            This link expires in {PASSWORD_RESET_EXPIRY_HOURS} hour.<br>
-            If you didn't request a password reset, you can ignore this email.
-            Your password will remain unchanged.
-        </p>
-        <p style="color: #ff6b6b; font-size: 12px; margin-top: 20px;">
-            <strong>Security Note:</strong> Never share this link with anyone. 
-            Meme App will never ask for your password via email.
-        </p>
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    </head>
+    <body style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #111111; line-height: 1.6;">
+        <div style="padding: 40px 20px; border: 1px solid #e5e5e5; margin-top: 20px;">
+            <h1 style="font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 20px; text-align: center; color: #000000; font-weight: 400;">Password Reset</h1>
+            
+            <p style="text-align: center; margin-bottom: 10px; color: #666666;">
+                Hi {html.escape(username)},
+            </p>
+            
+            <p style="text-align: center; margin-bottom: 30px; color: #666666;">
+                We received a request to reset your password.<br>
+                Click the button below to set a new password.
+            </p>
+            
+            <div style="text-align: center; margin: 40px 0;">
+                <a href="{reset_url}" 
+                   style="background: #000000; color: #ffffff; padding: 16px 32px; 
+                          text-decoration: none; display: inline-block; text-transform: uppercase; letter-spacing: 2px; font-size: 12px;">
+                    Reset Password
+                </a>
+            </div>
+            
+            <p style="text-align: center; font-size: 12px; color: #999999; margin-top: 40px; border-top: 1px solid #e5e5e5; padding-top: 20px;">
+                Link expires in {PASSWORD_RESET_EXPIRY_HOURS} hour.<br>
+                If you didn't request this, you can safely ignore this email.<br><br>
+                <a href="{reset_url}" style="color: #666666; text-decoration: underline;">{reset_url}</a>
+            </p>
+        </div>
     </body>
     </html>
     """
     
     text_body = f"""
-    Password Reset Request
+    Password Reset
     
     Hi {username},
     
@@ -247,10 +253,7 @@ def send_password_reset_email(email: str, token: str, username: str) -> bool:
     {reset_url}
     
     This link expires in {PASSWORD_RESET_EXPIRY_HOURS} hour.
-    If you didn't request a password reset, you can ignore this email.
-    Your password will remain unchanged.
-    
-    Security Note: Never share this link with anyone.
+    If you didn't request this, you can safely ignore this email.
     """
     
     msg = MIMEMultipart("alternative")
